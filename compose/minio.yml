@@ -1,0 +1,26 @@
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: jms_minio
+    hostname: jms_minio
+    restart: always
+    command: "server /data --console-address :9001"
+    environment:
+      TZ: ${TZ:-Asia/Shanghai}
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: $BOOTSTRAP_TOKEN
+      MINIO_REGION_NAME: us-west-rack2
+    ports:
+      - 9000:9000
+      - 9001:9001
+    volumes:
+      - ${VOLUME_DIR}/minio/data:/data
+      - ${CONFIG_DIR}/minio/config:/root/.minio
+    healthcheck:
+      test: "mc ready local"
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - net

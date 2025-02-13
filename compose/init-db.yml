@@ -1,0 +1,13 @@
+services:
+  core:
+    image: ${REGISTRY:-docker.io}/jumpserver/core:${VERSION}
+    container_name: jms_core
+    hostname: jms_core
+    command: sleep
+    env_file:
+      - ${CONFIG_FILE}
+    volumes:
+      - ${CONFIG_DIR}/certs:/opt/jumpserver/data/certs
+      - ${VOLUME_DIR}/core/data:/opt/jumpserver/data
+    networks:
+      - net

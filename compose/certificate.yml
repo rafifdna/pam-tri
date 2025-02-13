@@ -1,0 +1,11 @@
+services:
+  acme-sh:
+    image: neilpang/acme.sh
+    container_name: acme.sh
+    volumes:
+      - ./out:/acme.sh
+    network_mode: host
+    command: daemon
+    stdin_open: true
+    tty: true
+    restart: no

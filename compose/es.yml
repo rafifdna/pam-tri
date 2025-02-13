@@ -1,0 +1,34 @@
+services:
+  es:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.25
+    container_name: jms_es
+    hostname: jms_es
+    restart: always
+    ports:
+      - 9200:9200
+      - 9300:9300
+    volumes:
+      - ${VOLUME_DIR}/elasticsearch/data:/usr/share/elasticsearch/data
+      - ${VOLUME_DIR}/elasticsearch/logs:/usr/share/elasticsearch/logs
+    environment:
+      TZ: ${TZ:-Asia/Shanghai}
+      cluster.name: docker-cluster
+      discovery.type: single-node
+      network.host: 0.0.0.0
+      bootstrap.memory_lock: "true"
+      xpack.security.enabled: "true"
+      TAKE_FILE_OWNERSHIP: "true"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      ELASTIC_PASSWORD: $BOOTSTRAP_TOKEN
+    ulimits:
+      memlock:
+        soft: '-1'
+        hard: '-1'
+    healthcheck:
+      test: "curl -sL http://localhost:9200 > /dev/null"
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - net
